@@ -68,6 +68,18 @@ class AuthorDetailView(GeneralDetailView):
             raise Http404
         return obj
 
+class CommentListView(GeneralListView):
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(CommentListView, self).get_context_data(**kwargs)
+        # Get user
+        context['user_object'] = User.objects.get(id=self.kwargs["user_id"])
+        # Set page title
+        context['page_title'] = unicode(context['user_object'])
+        return context
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.kwargs["user_id"]).order_by('-added')
 
 
 
