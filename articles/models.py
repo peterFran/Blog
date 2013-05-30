@@ -25,7 +25,7 @@ class Blog(models.Model):
 class Entry(models.Model):
 	blog = models.ForeignKey(Blog)
 	title = models.CharField(max_length=200)
-	original_pub_date = models.DateTimeField('date published')
+	original_pub_date = models.DateTimeField('date published', default=datetime.datetime.now())
 	def __unicode__(self):
 		return self.title
 
@@ -50,7 +50,7 @@ class Revision(models.Model):
 	body = models.TextField()
 	entry = models.ForeignKey(Entry)
 	version_number = models.IntegerField(default=0)
-	pub_date = models.DateTimeField('date published')
+	pub_date = models.DateTimeField('date published', default=datetime.datetime.now())
 
 	def save(self, *args, **kwargs):
 		# Only modify number if creating for the first time (is default 0)

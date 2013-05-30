@@ -43,6 +43,7 @@ class EntryListView(GeneralListView):
         context = super(EntryListView, self).get_context_data(**kwargs)
         # Set page title
         context['page_title'] = Blog.objects.get(id=self.kwargs["blog_id"])
+        context['blog_object'] = Blog.objects.get(id=self.kwargs["blog_id"])
         return context
 
     def get_queryset(self):
@@ -115,3 +116,24 @@ def comment(request):
         comment.parent = Comment.objects.get(pk=request.POST['parent_id'])
     comment.save()
     return HttpResponseRedirect(reverse('articles:article', args=(comment.entry.id,)))
+
+def createEntry(request):
+    blog = get_object_or_404(Blog, pk=request.POST['blog_id'])
+    print blog.author
+    print request.user
+    if request.user == blog.author:
+        print "yo yo"
+        entry = Entry(
+            blog=blog,
+            title=request.POST['title'],
+        )
+        entry.save()
+        revision = Revision(
+            body=request.POST['body'],
+            entry=entry,
+        )
+        revision.save()
+        return HttpResponseRedirect(reverse('articles:article', args=(entry.id,)))
+    else:
+        raise Http404
+    
